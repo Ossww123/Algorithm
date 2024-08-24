@@ -1,0 +1,11 @@
+N, M = map(int, input().split())
+lst = [list(map(int, input().split())) for _ in range(N)]
+
+T=int(input())
+
+for tc in range(T):
+    y1, x1, y2, x2 = map(lambda k: int(k) -1, input().split())
+    result=0
+    for y in range(y1, y2+1):
+        result += sum(lst[y][x1:x2+1])
+    print(result)
