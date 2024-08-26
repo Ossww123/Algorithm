@@ -1,44 +1,50 @@
+from collections import deque
+
 N = int(input())
-tree = {}
-island_info = [['S', 0]]
-for i in range(1, N):
+
+# 섬의 양(늑대) 수를 표시
+lst = [0] * N
+
+# i번째 노드가 가지는 자식의 수
+children_num = [0] * N
+
+# i번째 노드의 부모
+parents = [0] * N
+
+for idx in range(1, N):
     animal, num, island = input().split()
-    island_info.append((animal, int(num), int(island) - 1))
-    tree.setdefault(int(island) - 1, []).append(i)
+    num = int(num)
+    island = int(island) - 1
+    
+    # 양이면 양수로 저장, 늑대면 음수로 저장
+    lst[idx] = num if animal == 'S' else -num
 
+    children_num[island] += 1
+    parents[idx] = island
 
-# 스택을 사용한 반복적 후위 탐색
-def iterative_postorder_traversal(root):
-    if root not in tree:
-        return [root]
+que = deque()
 
-    stack = [(root, False)]
-    orders = []
+# 자식의 수가 0이다 == 트리의 가장 깊은 부분
+for idx in range(N):
+    if not children_num[idx]:
+        que.append(idx)
 
-    while stack:
-        node, visited = stack.pop()
-        if visited:
-            orders.append(node)
-        else:
-            stack.append((node, True))
-            if node in tree:
-                for child in reversed(tree[node]):
-                    stack.append((child, False))
+while que:
+    now = que.popleft()
 
-    return orders
+    # 1번 섬이면 끝
+    if now == 0:
+        break
 
+    parent = parents[now]
 
-orders = iterative_postorder_traversal(0)
+    # 살아남은 양이 있다면 부모에게 전달
+    if lst[now] > 0:
+        lst[parent] += lst[now]
 
-survived_sheeps = [0] * N
-for i in orders:
-    if i in tree:
-        for j in tree[i]:
-            survived_sheeps[i] += survived_sheeps[j]
+    # 자식 노드의 양을 다 계산 했다면 다음 계산
+    children_num[parent] -= 1
+    if not children_num[parent]:
+        que.append(parent)
 
-    if island_info[i][0] == 'S':
-        survived_sheeps[i] += island_info[i][1]
-    else:
-        survived_sheeps[i] = max(0, survived_sheeps[i] - island_info[i][1])
-
-print(survived_sheeps[0])
+print(lst[0])
