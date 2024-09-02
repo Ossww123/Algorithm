@@ -1,3 +1,4 @@
+# 남은 횟수의 경우의 수
 def remained(M):
     total = 2 ** M
     while M > 1:
@@ -7,28 +8,25 @@ def remained(M):
     return total
 
 
-def permutation(idx=0,w_diff=0, used=0):
+# 순열
+def permutation(remain, idx=0,w_diff=0):
     global result
 
-    if all_weight - used < w_diff:
+    # 왼쪽과 오른쪽의 무게차보다 남아있는 추의 무게합이 적으면
+    if remain <= w_diff:
         result += remained(N - idx)
         return
 
-    if idx == N:
-        result += 1
-        return
-
+    # 순열, 왼쪽에 올리면 + weights[i], 오른쪽에 올리면 - weights[i]
     for i in range(N):
         if not visited[i]:
-            for j in range(2):
-                if j == 0:
-                    visited[i] = True
-                    permutation(idx + 1, w_diff + weights[i], used + weights[i])
-                    visited[i] = False
-                elif j == 1 and w_diff >= weights[i]:
-                    visited[i] = True
-                    permutation(idx + 1, w_diff - weights[i], used + weights[i])
-                    visited[i] = False
+            visited[i] = True
+            permutation(remain - weights[i], idx + 1, w_diff + weights[i])
+            visited[i] = False
+            if w_diff >= weights[i]:
+                visited[i] = True
+                permutation(remain - weights[i], idx + 1, w_diff - weights[i])
+                visited[i] = False
 
 
 T = int(input())
@@ -41,5 +39,5 @@ for tc in range(1, T+1):
 
     result = 0
 
-    permutation()
+    permutation(all_weight)
     print(f'#{tc} {result}')
