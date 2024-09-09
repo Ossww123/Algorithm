@@ -1,21 +1,24 @@
-N, M = map(int, input().split())
-lst = sorted(list(map(int, input().split())))
-visited = [False] * N
-temp = []
-
-def backtrack():
-    if len(temp) == M:
-        print(*temp)
+def solve(lst=[]):
+    if len(lst) == M:
+        print(*lst)
         return
 
-    remember = 0
-    for i in range(N):
-        if not visited[i] and remember != lst[i]:
-            visited[i] = True
-            temp.append(lst[i])
-            remember = lst[i]
-            backtrack()
-            visited[i] = False
-            temp.pop()
+    a = -1
 
-backtrack()
+    for i in range(N):
+        if num_lst[i] != a and visited[i] == False:
+            a = num_lst[i]
+            visited[i] = True
+            lst.append(num_lst[i])
+            solve(lst)
+            lst.pop()
+            visited[i] = False
+
+
+
+
+N, M = map(int, input().split())
+num_lst = list(map(int, input().split()))
+num_lst.sort()
+visited = [False] * N
+solve()
