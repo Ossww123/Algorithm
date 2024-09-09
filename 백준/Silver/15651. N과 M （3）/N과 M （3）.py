@@ -1,13 +1,12 @@
-N, M = map(int, input().split())
-
-def backtrack(result):
-    if len(result) == M:
-        print(*result)
+def solve(lst = []):
+    if len(lst) == M:
+        print(*lst)
         return
 
     for i in range(1, N+1):
-        result.append(i)
-        backtrack(result)
-        result.pop()
+        lst.append(i)
+        solve(lst)
+        lst.pop()
 
-backtrack([])
+N, M = map(int, input().split())
+solve()
