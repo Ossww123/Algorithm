@@ -1,16 +1,15 @@
-N, M = map(int, input().split())
-lst = list(map(int, input().split()))
-lst.sort() # 1 7 8 9
-
-def backtrack(result):
-    if len(result) == M:
-        print(*result)
+def solve(lst = []):
+    if len(lst) ==M:
+        print(*lst)
         return
 
     for i in range(N):
-        result.append(lst[i])
-        backtrack(result)
-        result.pop()
+        lst.append(num_lst[i])
+        solve(lst)
+        lst.pop()
 
 
-backtrack([])
+N, M =map(int, input().split())
+num_lst = list(map(int,input().split()))
+num_lst.sort()
+solve()
