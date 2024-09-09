@@ -1,17 +1,15 @@
-N, M = map(int, input().split())
-lst = list(map(int, input().split()))
-lst.sort()
-
-def backtrack(result):
-    global lst
-    if len(result) == M:
-        print(*result)
+def solve(lst = []):
+    if len(lst) == M:
+        print(*lst)
         return
 
-    for i in lst:
-        if not i in result:
-            result.append(i)
-            backtrack(result)
-            result.pop()
+    for i in range(N):
+        if num_lst[i] not in lst:
+            lst.append(num_lst[i])
+            solve(lst)
+            lst.pop()
 
-backtrack([])
+N, M =map(int, input().split())
+num_lst = list(map(int,input().split()))
+num_lst.sort()
+solve()
