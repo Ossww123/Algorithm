@@ -1,17 +1,21 @@
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
         // 입력 받기
-        int N = scanner.nextInt(); // 카드 개수
-        int M = scanner.nextInt(); // 목표 값
+        String[] firstLine = br.readLine().split(" "); // 첫 줄 입력
+        int N = Integer.parseInt(firstLine[0]); // 카드 개수
+        int M = Integer.parseInt(firstLine[1]); // 목표 값
         int[] cards = new int[N];
 
+        String[] cardInput = br.readLine().split(" "); // 카드 숫자들 입력
         for (int i = 0; i < N; i++) {
-            cards[i] = scanner.nextInt();
+            cards[i] = Integer.parseInt(cardInput[i]);
         }
 
         // 카드 정렬
@@ -21,7 +25,7 @@ public class Main {
 
         // 3장의 카드 조합 탐색
         for (int i = 0; i < N - 2; i++) {
-            if ( cards[i] > M) break;
+            if (cards[i] > M) break;
             for (int j = i + 1; j < N - 1; j++) {
                 if (cards[i] + cards[j] > M) break;
 
