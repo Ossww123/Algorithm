@@ -23,18 +23,18 @@ struct Trie {
             if (go[i]) delete go[i];
     }
 
-    // 문자열 key를 현재 노드부터 삽입
-    void insert(const char* key) {
+    // string key를 현재 노드부터 삽입
+    void insert(const string& key, int index = 0) {
         // 문자열이 끝남
-        if (*key == '\0') output = true;
+        if (index == key.length()) output = true;
         // 아닐 경우
         else {
-            int next = *key - '0';
+            int next = key[index] - '0';
             // 해당 노드가 없으면 새로 동적 할당해서 만듦
             if (!go[next]) go[next] = new Trie;
             goexist = true;
             // 자식 노드에서 이어서 삽입
-            go[next]->insert(key + 1);
+            go[next]->insert(key, index + 1);
         }
     }
 
@@ -58,7 +58,7 @@ int main() {
         cin >> N;
         Trie* root = new Trie; // 루트 노드 만들기
         for (int i = 0; i < N; i++) {
-            char tel[11];
+            string tel;
             cin >> tel;
             root->insert(tel);
         }
@@ -66,6 +66,7 @@ int main() {
             cout << "YES\n";
         else
             cout << "NO\n";
+
         // 소멸자를 호출하여 동적 할당 해제를 하지 않으면 힙 메모리가 부족할 수 있음
         delete root;
     }
