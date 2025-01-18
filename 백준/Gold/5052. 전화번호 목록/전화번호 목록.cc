@@ -4,71 +4,80 @@
 
 using namespace std;
 
-const int GO_MAX = 10; // 트라이 노드마다 포인터 개수
+const int GO_MAX = 10;    // 트라이 노드마다 포인터 개수
+const int MAX_T = 50;     // 최대 테스트케이스
+const int MAX_N = 10000;  // 각 테스트케이스당 최대 문자열 수
+const int MAX_LEN = 10;   // 각 문자열의 최대 길이
+const int POOL_SIZE = MAX_N * MAX_LEN + 1;
 
 struct Trie {
-    Trie* go[GO_MAX];
+    int go[GO_MAX];
     bool output;
     bool goexist;
-
-    // 생성자
-    Trie() {
-        fill(go, go + GO_MAX, nullptr);
-        output = goexist = false;
-    }
-
-    // 소멸자
-    ~Trie() {
-        for (int i = 0; i < GO_MAX; i++)
-            if (go[i]) delete go[i];
-    }
-
-    // string key를 현재 노드부터 삽입
-    void insert(const string& key, int index = 0) {
-        // 문자열이 끝남
-        if (index == key.length()) output = true;
-        // 아닐 경우
-        else {
-            int next = key[index] - '0';
-            // 해당 노드가 없으면 새로 동적 할당해서 만듦
-            if (!go[next]) go[next] = new Trie;
-            goexist = true;
-            // 자식 노드에서 이어서 삽입
-            go[next]->insert(key, index + 1);
-        }
-    }
-
-    // 이 노드가 일관성이 있는가?
-    bool consistent() {
-        // 자식도 있으면서 여기서 끝나는 전화번호도 있다면 일관성 없음
-        if (goexist && output) return false;
-        // 자식들 중 하나라도 일관성이 없으면 이 노드도 일관성이 없음
-        for (int i = 0; i < GO_MAX; i++)
-            if (go[i] && !go[i]->consistent()) return false;
-        // 일관성이 있음
-        return true;
-    }
 };
 
+Trie nodes[POOL_SIZE];
+int unused;
+
+// 새로운 노드 초기화
+void init_node(int node_idx) {
+    fill(nodes[node_idx].go, nodes[node_idx].go + GO_MAX, -1);
+    nodes[node_idx].output = nodes[node_idx].goexist = false;
+}
+
+// 트라이 초기화 (테스트케이스마다 호출)
+void init_trie() {
+    unused = 0;
+    init_node(unused++);  // 루트 노드 생성
+}
+
+// 문자열 삽입
+void insert(const string& str, int node = 0, int idx = 0) {
+    if (idx == str.length()) {
+        nodes[node].output = true;
+        return;
+    }
+    
+    int& next = nodes[node].go[str[idx] - '0'];
+    if (next == -1) {
+        next = unused;
+        init_node(unused++);
+    }
+    nodes[node].goexist = true;
+    insert(str, next, idx + 1);
+}
+
+// 일관성 검사
+bool consistent(int node) {
+    if (nodes[node].goexist && nodes[node].output) return false;
+    
+    for (int i = 0; i < GO_MAX; i++) {
+        if (nodes[node].go[i] != -1 && !consistent(nodes[node].go[i])) 
+            return false;
+    }
+    return true;
+}
+
 int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+    
     int T;
     cin >> T;
+    
     for (int t = 0; t < T; t++) {
         int N;
         cin >> N;
-        Trie* root = new Trie; // 루트 노드 만들기
+        
+        init_trie();
+        
         for (int i = 0; i < N; i++) {
             string tel;
             cin >> tel;
-            root->insert(tel);
+            insert(tel);
         }
-        if (root->consistent())
-            cout << "YES\n";
-        else
-            cout << "NO\n";
-
-        // 소멸자를 호출하여 동적 할당 해제를 하지 않으면 힙 메모리가 부족할 수 있음
-        delete root;
+        
+        cout << (consistent(0) ? "YES\n" : "NO\n");
     }
 
     return 0;
