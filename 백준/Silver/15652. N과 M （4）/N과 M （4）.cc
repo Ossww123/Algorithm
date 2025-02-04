@@ -3,32 +3,33 @@
 
 using namespace std;
 
-void backtracking(int N, int M, vector<int>& seq, int idx) {
-	if (seq.size() == M) {
-		for (int i = 0; i < M; i++) {
-			cout << seq[i] << " ";
-		}
-		cout << "\n";
-		return;
-	}
+vector<int> nums(8, 0);
 
-	for (int i = 1; i <= N; i++) {
-		if (i >= idx) {
-			seq.push_back(i);
-			backtracking(N, M, seq, i);
-			seq.pop_back();
-		}
-	}
+void backtracking(int N, int M, int last=0, int depth=0) {
+    if (depth == M) {
+        for (int i = 0; i < M; i++) {
+            cout << nums[i] << ' ';
+        }
+        cout << '\n';
+        return;
+    }
+
+    for (int i = 1; i <= N; i++) {
+        if (i < last) continue;
+        nums[depth] = i;
+        backtracking(N, M, i, depth + 1);
+        nums[depth] = 0;
+    }
 }
 
 int main() {
-	int N, M;
-	cin >> N >> M;
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 
-	vector<int> seq;
-	// vector<bool> used(N + 1, false);
+    int N, M;
+    cin >> N >> M;
 
-	backtracking(N, M, seq, 0);
+    backtracking(N, M);
 
-	return 0;
+    return 0;
 }
