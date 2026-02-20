@@ -1,56 +1,52 @@
 #include <iostream>
-#include <string>
 #include <vector>
-#include <unordered_set>
-#include <functional>
+#include <algorithm>
+#include <string>
 
 using namespace std;
 
-vector<vector<int>> image;
+int N;
+vector<string> matrix;
 
-string solve(int N, int row, int col) {
-    if (N == 1) {
-        return to_string(image[row][col]);
-    }
+void DivideAndConquer(int x, int y, int size)
+{
+	if (size == 1)
+	{
+		cout << matrix[y][x];
+		return;
+	}
 
-    string lu = solve(N / 2, row, col);
-    string ru = solve(N / 2, row, col + N/2);
-    string ld = solve(N / 2, row + N/2, col);
-    string rd = solve(N / 2, row+ N/2, col + N/2);
-
-    if (lu.length() == 1 && lu == ru && ru == ld && ld == rd) {
-        return lu;
-    }
-    else {
-        return '(' + lu + ru + ld + rd + ')';
-    }
-
-
+	char first = matrix[y][x];
+	for (int i = y; i < y + size; i++)
+	{
+		for (int j = x; j < x + size; j++)
+		{
+			if (matrix[i][j] != first)
+			{
+				cout << "(";
+				DivideAndConquer(x, y, size / 2);
+				DivideAndConquer(x + size / 2, y, size / 2);
+				DivideAndConquer(x, y + size / 2, size / 2);
+				DivideAndConquer(x + size / 2, y + size / 2, size / 2);
+				cout << ")";
+				return;
+			}
+		}
+	}
+	cout << first;
 }
 
-int main() {
-    ios_base::sync_with_stdio(false);
-    cin.tie(NULL);
-    cout.tie(NULL);
+int main()
+{
+	cin >> N;
 
-    int N;
-    cin >> N;
+	matrix.resize(N);
+	for (int i = 0; i < N; i++)
+	{
+		cin >> matrix[i];
+	}
 
-    image.resize(N, vector<int>(N));
+	DivideAndConquer(0, 0, N);
 
-    for (int i = 0; i < N; i++) {
-        string s;
-        cin >> s;
-        for (int j = 0; j < N;j++) {
-            char c = s[j];
-            int num = c - '0';
-            image[i][j] = num;
-        }
-    }
-
-    string answer = solve(N, 0, 0);
-
-    cout << answer;
-
-    return 0;
+	return 0;
 }
