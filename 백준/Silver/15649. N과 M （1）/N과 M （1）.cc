@@ -1,27 +1,24 @@
-#include <iostream>
-#include <vector>
-
+#include <bits/stdc++.h>
 using namespace std;
 
-vector<int> nums;
-vector<bool> visited(9, false);
+int N, M;
+vector<int> arr;
+vector<bool> visited;
 
-void backtracking(int N, int M,int idx = 0) {
-    if (idx == M) {
+void dfs(int depth) {
+    if (depth == M) {
         for (int i = 0; i < M; i++) {
-            cout << nums[i] << ' ';
+            cout << arr[i] << (i + 1 == M ? '\n' : ' ');
         }
-        cout << '\n';
         return;
     }
 
     for (int i = 1; i <= N; i++) {
         if (visited[i]) continue;
-        nums.push_back(i);
         visited[i] = true;
-        backtracking(N, M, idx + 1);
+        arr[depth] = i;
+        dfs(depth + 1);
         visited[i] = false;
-        nums.pop_back();
     }
 }
 
@@ -29,10 +26,10 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
-    int N, M;
     cin >> N >> M;
+    arr.assign(M, 0);
+    visited.assign(N + 1, false);
 
-    backtracking(N, M);
-
+    dfs(0);
     return 0;
 }
