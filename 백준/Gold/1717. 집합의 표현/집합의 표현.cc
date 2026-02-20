@@ -1,54 +1,75 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <string>
+#include <queue>
 
 using namespace std;
 
-int p[1000010]; // 부모 노드 저장 배열
+struct DSU
+{
+	vector<int> parent, size;
 
-// 루트 노드 찾기 (경로 압축 적용)
-int find(int n) {
-    if (p[n] == n) return n;  // 자신이 루트일 경우 그대로 반환
-    return p[n] = find(p[n]); // 경로 압축: 부모를 루트로 갱신
-}
+	DSU(int n)
+	{
+		parent.resize(n);
+		size.resize(n, 1);
+		for (int i = 0; i < n; i++)
+			parent[i] = i;
+	}
 
-// 두 집합 합치기
-void merge(int a, int b) {
-    a = find(a); // a의 루트 찾기
-    b = find(b); // b의 루트 찾기
-    if (a != b) p[b] = a; // 루트가 다르면 b의 부모를 a로 설정
-}
+	int find(int a)
+	{
+		if (parent[a] == a)
+			return a;
+		parent[a] = find(parent[a]);
+		return parent[a];
+	}
 
-int main() {
-    ios::sync_with_stdio(false); // 입출력 최적화
-    cin.tie(nullptr);
+	void unite(int a, int b)
+	{
+		a = find(a);
+		b = find(b);
+		if (a != b)
+		{
+			if (size[a] < size[b])
+				swap(a, b);
+			parent[b] = a;
+			size[a] += size[b];
+		}
+	}
 
-    int n, m;
-    cin >> n >> m;
+	bool same(int a, int b)
+	{
+		return find(a) == find(b);
+	}
+};
 
-    // 부모 배열 초기화
-    for (int i = 0; i <= n; i++) {
-        p[i] = i;
-    }
+int main()
+{
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
 
-    for (int i = 0; i < m; i++) {
-        int cal, a, b;
-        cin >> cal >> a >> b;
+	int N, M;
+	cin >> N >> M;
 
-        if (cal == 0) {
-            // 집합 합치기
-            merge(a, b);
-        }
-        else {
-            // 연결 여부 확인
-            if (find(a) == find(b)) {
-                cout << "YES\n";
-            }
-            else {
-                cout << "NO\n";
-            }
-        }
-    }
+	DSU dsu(N + 1);
+	for (int i = 0; i < M; i++)
+	{
+		int q, a, b;
+		cin >> q >> a >> b;
+		if (q == 1)
+		{
+			if (dsu.same(a, b))
+				cout << "YES\n";
+			else
+				cout << "NO\n";
+		}
+		else
+		{
+			dsu.unite(a, b);
+		}
+	}
 
-    return 0;
+	return 0;
 }
